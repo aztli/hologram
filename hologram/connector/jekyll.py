@@ -1,5 +1,6 @@
 from sanic.log import log
 from treelib import Node, Tree
+from hologram.datastore import DataFile
 import aiofiles
 import yaml
 import os
@@ -9,6 +10,7 @@ class Jekyll:
     def __init__(self, path):
         self.path = path
         self.tree = Tree()
+        self.data = Tree()
 
     async def get_configuration(self):
         path = os.path.join(self.path, '_config.yml')
@@ -33,6 +35,21 @@ class Jekyll:
 
         return self.tree.to_json()
 
-    async def get_data(self, path):
-        pass
+    async def get_data(self):
+        data_path = os.path.join(self.path, '_data')
+        data_files = []
+
+        if not os.path.exists(data_path):
+            return {}
+
+        for (parent, folders, files) in os.walk(data_path):
+            for path in files:
+                abs_path = os.path.join(parent, path)
+                df = DataFile({'directory': parent, 'filename': path})
+                async with aiofiles.open(abs_path, mode='r') as f:
+                    content = await f.read()
+                    df.data = yaml.load(content)
+                    data_files.append(df)
+
+        return data_files
 

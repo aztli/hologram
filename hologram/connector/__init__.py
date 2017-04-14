@@ -8,3 +8,8 @@ async def get_metadata(path):
 async def get_files(path):
   j = Jekyll(path)
   return j.get_files()
+
+
+async def get_data(path):
+  j = Jekyll(path)
+  return await j.get_data()
