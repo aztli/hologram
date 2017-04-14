@@ -1,0 +1,3 @@
+[submodule "examples/opensource.guide"]
+	path = examples/opensource.guide
+	url = https://github.com/github/opensource.guide.git
